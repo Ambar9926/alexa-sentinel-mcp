@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alexa+ Sentinel | MCP Streamable HTTP Simulator</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: #131b2e;
+      --accent: #00caFF;
+      --alexa: #31c4f3;
+      --success: #10b981;
+      --warn: #f59e0b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--panel); padding: 16px 24px; border-radius: 12px;
+      border: 1px solid #1e293b; margin-bottom: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .orb {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: radial-gradient(circle, var(--accent), #0284c7);
+      box-shadow: 0 0 18px var(--accent);
+      animation: pulse 2s infinite alternate;
+    }
+    @keyframes pulse { from { transform: scale(0.95); opacity: 0.8; } to { transform: scale(1.08); opacity: 1; } }
+    .badge {
+      background: #0284c733; color: var(--accent); border: 1px solid var(--accent);
+      padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    }
+    .grid { display: grid; grid-template-columns: 1.1fr 1.2fr; gap: 20px; }
+    .card {
+      background: var(--panel); border: 1px solid #1e293b; border-radius: 12px; padding: 20px;
+    }
+    h2 { font-size: 18px; margin-bottom: 14px; color: var(--accent); }
+    .demo-btn {
+      width: 100%; padding: 14px; border: none; border-radius: 10px;
+      background: linear-gradient(90deg, #00caff, #2563eb); color: #fff;
+      font-weight: 700; font-size: 15px; cursor: pointer; margin-bottom: 16px;
+      box-shadow: 0 4px 15px rgba(0, 202, 255, 0.3);
+    }
+    .demo-btn:hover { opacity: 0.92; }
+    .cmd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .cmd-btn {
+      background: #1e293b; color: var(--text); border: 1px solid #334155;
+      padding: 12px; border-radius: 8px; cursor: pointer; text-align: left; font-size: 13px;
+      transition: 0.2s;
+    }
+    .cmd-btn:hover { border-color: var(--accent); background: #26354d; }
+    .cmd-btn strong { display: block; color: var(--accent); margin-bottom: 4px; }
+    .alexa-response {
+      background: #0f172a; border-left: 4px solid var(--accent);
+      padding: 14px; border-radius: 8px; margin-bottom: 18px; min-height: 75px;
+    }
+    .devices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .device {
+      background: #0f172a; border: 1px solid #1e293b; padding: 14px; border-radius: 10px;
+    }
+    .device h4 { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+    .status { font-size: 15px; font-weight: 700; color: var(--success); }
+    pre {
+      background: #070a12; color: #38bdf8; padding: 14px; border-radius: 8px;
+      height: 410px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 12.5px;
+      border: 1px solid #1e293b; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="orb" id="alexaOrb"></div>
+      <div>
+        <h1>Alexa+ Sentinel</h1>
+        <p style="color: var(--muted); font-size: 13px;">Multi-Device Agentic Orchestrator via Model Context Protocol (MCP Spec 2025-11-25)</p>
+      </div>
+    </div>
+    <div class="badge">MCP Streamable HTTP: ACTIVE</div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h2>1. Alexa+ Agentic Command Center</h2>
+      <button class="demo-btn" onclick="runFullAutoDemo()">
+        ▶ Run Automated English Walkthrough (Click for Video Demo)
+      </button>
+
+      <div class="cmd-grid">
+        <button class="cmd-btn" onclick="triggerScenario('focus')">
+          <strong>🧠 Deep Study & Focus Mode</strong>
+          "Alexa, start focus session using my Bee wearable context."
+        </button>
+        <button class="cmd-btn" onclick="triggerScenario('delivery')">
+          <strong>📦 Ring Smart Delivery Guard</strong>
+          "Alexa, handle the front door courier while I'm in a meeting."
+        </button>
+        <button class="cmd-btn" onclick="triggerScenario('movie')">
+          <strong>🎬 Fire TV Ambient Cinema</strong>
+          "Alexa, prepare the living room for family movie night."
+        </button>
+        <button class="cmd-btn" onclick="triggerScenario('security')">
+          <strong>🛡️ Perimeter Night Sweep</strong>
+          "Alexa, lock down the house and summarize daily activity."
+        </button>
+      </div>
+
+      <div class="alexa-response">
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">ALEXA+ VOICE & AGENT OUTPUT:</div>
+        <div id="speechOutput" style="font-size: 15px; font-weight: 500;">
+          "Ready. Click any scenario above or run the automated demo to invoke MCP tools across Ring, Fire TV, and Bee."
+        </div>
+      </div>
+
+      <h2>2. Connected Amazon Ecosystem State</h2>
+      <div class="devices">
+        <div class="device">
+          <h4>🔔 Ring Front Doorbell</h4>
+          <div class="status" id="ringState">Armed - Motion Monitoring</div>
+        </div>
+        <div class="device">
+          <h4>📺 Fire TV (Vega OS)</h4>
+          <div class="status" id="fireTvState">Standby - Home Screen</div>
+        </div>
+        <div class="device">
+          <h4>🐝 Bee Wearable AI</h4>
+          <div class="status" id="beeState">Syncing Voice Notes & Tasks</div>
+        </div>
+        <div class="device">
+          <h4>☁️ AWS Bedrock AgentCore</h4>
+          <div class="status" id="awsState">MCP Session Connected</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. Live MCP Streamable HTTP (JSON-RPC 2.0) Inspector</h2>
+      <pre id="mcpLogs">[SYSTEM] Initializing Alexa+ MCP Client (Spec 2025-11-25)...
+[MCP-HTTP] Connected to endpoint: http://localhost:8000/mcp (Streamable HTTP)
+[TOOLS] Registered 4 tools: ring_door_control, firetv_launch_mode, bee_context_sync, aws_security_audit
+[READY] Waiting for Alexa+ natural language intent...
+</pre>
+    </div>
+  </div>
+
+  <script>
+    const MCP_ENDPOINT = "http://localhost:8000/mcp";
+
+    function logMCP(direction, payload) {
+      const box = document.getElementById("mcpLogs");
+      const time = new Date().toISOString().split("T")[1].slice(0, 8);
+      box.textContent += `\n[${time}] ${direction}:\n${JSON.stringify(payload, null, 2)}\n`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function speakText(text) {
+      document.getElementById("speechOutput").textContent = `"${text}"`;
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "en-US";
+        utter.rate = 1.02;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    async function invokeMCPTool(toolName, args) {
+      const rpcRequest = {
+        jsonrpc: "2.0",
+        id: Math.floor(Math.random() * 9000) + 1000,
+        method: "tools/call",
+        params: {
+          name: toolName,
+          arguments: args,
+          _meta: { protocolVersion: "2025-11-25", transport: "streamable-http" }
+        }
+      };
+      logMCP("CLIENT -> MCP SERVER (POST /mcp)", rpcRequest);
+
+      try {
+        await fetch(MCP_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(rpcRequest)
+        });
+      } catch (e) {
+        // Local simulation fallback when opening index.html directly
+      }
+
+      const rpcResponse = {
+        jsonrpc: "2.0",
+        id: rpcRequest.id,
+        result: {
+          status: "success",
+          executedTool: toolName,
+          timestamp: new Date().toISOString(),
+          content: [{ type: "text", text: `Successfully executed ${toolName} with state update.` }]
+        }
+      };
+      setTimeout(() => logMCP("MCP SERVER -> CLIENT (200 OK)", rpcResponse), 350);
+    }
+
+    function triggerScenario(type) {
+      if (type === "focus") {
+        invokeMCPTool("bee_context_sync", { mode: "deep_work", extract_action_items: true });
+        invokeMCPTool("ring_door_control", { auto_reply: "Owner in focus session. Please leave packages at door." });
+        invokeMCPTool("firetv_launch_mode", { app: "ambient_focus_dashboard", mute_notifications: true });
+        document.getElementById("beeState").textContent = "Focus Active - 3 Tasks Queued";
+        document.getElementById("ringState").textContent = "Auto-Reply: Leave Package";
+        document.getElementById("fireTvState").textContent = "Ambient Study Timer ON";
+        speakText("Starting your deep focus session. I synced your tasks from Bee wearable, muted Fire TV notifications, and set your Ring doorbell to automatic courier reply.");
+      } else if (type === "delivery") {
+        invokeMCPTool("ring_door_control", { event: "motion_detected", verify_courier: true, speak_instructions: true });
+        invokeMCPTool("firetv_launch_mode", { picture_in_picture: "ring_front_door_stream" });
+        document.getElementById("ringState").textContent = "Courier Verified - Audio Played";
+        document.getElementById("fireTvState").textContent = "PiP Live Feed: Front Door";
+        speakText("Package delivery detected at the front door. I opened the live Ring camera feed in picture-in-picture on your Fire TV and instructed the courier to leave the box inside the porch.");
+      } else if (type === "movie") {
+        invokeMCPTool("firetv_launch_mode", { app: "ai_cinema_recommender", profile: "family" });
+        invokeMCPTool("ring_door_control", { perimeter_alerts: "silent_overlay_only" });
+        document.getElementById("fireTvState").textContent = "Playing: AI Sci-Fi Pick (4K)";
+        document.getElementById("ringState").textContent = "Silent TV Alerts Enabled";
+        speakText("Living room is ready for movie night. Fire TV has launched your personalized family watchlist, and Ring alerts are routed silently to the screen corner.");
+      } else if (type === "security") {
+        invokeMCPTool("aws_security_audit", { lock_all: true, summarize_bee_notes: true });
+        document.getElementById("ringState").textContent = "Night Lockdown - Armed";
+        document.getElementById("fireTvState").textContent = "Powered Off (Energy Saver)";
+        document.getElementById("beeState").textContent = "Tomorrow's Briefing Ready";
+        speakText("Night security sweep complete. Ring perimeter is armed, Fire TV is powered down, and your Bee wearable summary is ready for tomorrow morning.");
+      }
+    }
+
+    function runFullAutoDemo() {
+      speakText("Welcome to the Alexa Plus Sentinel demonstration, powered by Model Context Protocol Streamable H T T P.");
+      setTimeout(() => triggerScenario("focus"), 6500);
+      setTimeout(() => triggerScenario("delivery"), 17500);
+      setTimeout(() => triggerScenario("security"), 29000);
+    }
+  </script>
+</body>
+</html>

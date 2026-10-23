@@ -1,0 +1,17 @@
+{
+  "mcpVersion": "2025-11-25",
+  "mcpServers": {
+    "alexa-plus-sentinel": {
+      "transport": "streamable-http",
+      "url": "http://localhost:8000/mcp",
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "tools": [
+        "ring_door_control",
+        "firetv_launch_mode",
+        "bee_context_sync",
+        "aws_security_audit"
+      ]
+    }
+  }
+}
